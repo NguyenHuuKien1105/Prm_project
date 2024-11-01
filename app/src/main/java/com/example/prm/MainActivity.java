@@ -1,5 +1,6 @@
 package com.example.prm;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -42,6 +43,16 @@ public class MainActivity extends AppCompatActivity {
 
         classAdapter = new ClassAdapter(this, classItems);
         recyclerView.setAdapter(classAdapter);
+        classAdapter.setOnItemClickListener(position -> gotoItemActivity(position));
+    }
+
+    private void gotoItemActivity(int position) {
+        Intent intent = new Intent(this, StudentActivity.class);
+
+        intent.putExtra("className", classItems.get(position).getClassName());
+        intent.putExtra("subjectName", classItems.get(position).getSubject());
+        intent.putExtra("position", position);
+        startActivity(intent);
     }
 
     // show dialog to add new class

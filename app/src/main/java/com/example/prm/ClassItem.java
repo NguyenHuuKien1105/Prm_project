@@ -1,8 +1,8 @@
 package com.example.prm;
 
 public class ClassItem {
-    String className;
-    String subject;
+    private String className;
+    private String subject;
 
     public ClassItem() {
     }

@@ -17,7 +17,8 @@ public class MyDialog extends DialogFragment {
     public static final String CLASS_ADD_DIALOG = "addClass";
 
     private OnCLickListener listener;
-    public interface OnCLickListener{
+
+    public interface OnCLickListener {
         void onClick(String text1, String text2);
     }
 
@@ -29,20 +30,17 @@ public class MyDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Dialog dialog = null;
-        if (getTag().equals(CLASS_ADD_DIALOG))dialog=getAddClassDialog();
+        if (getTag().equals(CLASS_ADD_DIALOG)) dialog = getAddClassDialog();
         return dialog;
     }
 
     private Dialog getAddClassDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog, null);
+        builder.setView(view);
 
         TextView title = view.findViewById(R.id.titleDialog);
         title.setText("Add New Class");
-
-        builder.setView(view);
-        AlertDialog dialog = builder.create();
-        dialog.show();
 
         EditText class_edt = view.findViewById(R.id.edt01);
         EditText subject_edt = view.findViewById(R.id.edt02);
@@ -60,7 +58,6 @@ public class MyDialog extends DialogFragment {
             listener.onClick(className, subName);
             dismiss();
         });
-
         return builder.create();
     }
 }

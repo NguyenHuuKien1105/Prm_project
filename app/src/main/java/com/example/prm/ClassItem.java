@@ -4,9 +4,6 @@ public class ClassItem {
     private String className;
     private String subject;
 
-    public ClassItem() {
-    }
-
     public ClassItem(String className, String subject) {
         this.className = className;
         this.subject = subject;

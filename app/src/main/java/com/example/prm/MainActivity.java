@@ -41,15 +41,14 @@ public class MainActivity extends AppCompatActivity {
         fabMain = findViewById(R.id.fab_main);
         fabMain.setOnClickListener(v -> showDialog());
 
+        setToolbar();
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
         classAdapter = new ClassAdapter(this, classItems);
         recyclerView.setAdapter(classAdapter);
         classAdapter.setOnItemClickListener(position -> gotoItemActivity(position));
-        setToolbar();
     }
 
     private void setToolbar() {

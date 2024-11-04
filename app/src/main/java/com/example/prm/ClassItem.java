@@ -1,11 +1,8 @@
 package com.example.prm;
 
 public class ClassItem {
-    String className;
-    String subject;
-
-    public ClassItem() {
-    }
+    private String className;
+    private String subject;
 
     public ClassItem(String className, String subject) {
         this.className = className;

@@ -1,14 +1,14 @@
 package com.example.prm;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,9 +25,7 @@ public class MainActivity extends AppCompatActivity {
     ClassAdapter classAdapter;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ClassItem> classItems = new ArrayList<>();
-
-    EditText class_edt;
-    EditText subject_edt;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,44 +41,46 @@ public class MainActivity extends AppCompatActivity {
         fabMain = findViewById(R.id.fab_main);
         fabMain.setOnClickListener(v -> showDialog());
 
+        setToolbar();
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
         classAdapter = new ClassAdapter(this, classItems);
         recyclerView.setAdapter(classAdapter);
+        classAdapter.setOnItemClickListener(position -> gotoItemActivity(position));
+    }
+
+    private void setToolbar() {
+        toolbar = findViewById(R.id.toolbar);
+        TextView title = toolbar.findViewById(R.id.title_toolbar);
+        TextView subTitle = toolbar.findViewById(R.id.subtitle_toolbar);
+        ImageButton back = toolbar.findViewById(R.id.back);
+        ImageButton save = toolbar.findViewById(R.id.save);
+
+        title.setText("Attendance App");
+        subTitle.setVisibility(RecyclerView.GONE);
+        back.setVisibility(View.INVISIBLE);
+        save.setVisibility(View.INVISIBLE);
+    }
+
+    private void gotoItemActivity(int position) {
+        Intent intent = new Intent(this, StudentActivity.class);
+
+        intent.putExtra("className", classItems.get(position).getClassName());
+        intent.putExtra("subjectName", classItems.get(position).getSubject());
+        intent.putExtra("position", position);
+        startActivity(intent);
     }
 
     // show dialog to add new class
     private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this).inflate(R.layout.class_dialog, null);
-
-        builder.setView(view);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        class_edt = view.findViewById(R.id.class_edit);
-        subject_edt = view.findViewById(R.id.subject_edit);
-
-        Button cancle = view.findViewById(R.id.cancel_btn);
-        Button add = view.findViewById(R.id.add_btn);
-
-        cancle.setOnClickListener(v -> dialog.dismiss());
-
-        add.setOnClickListener(v -> {
-            addClass();
-            dialog.dismiss();
-        });
-
-
-
+        MyDialog myDialog = new MyDialog();
+        myDialog.show(getSupportFragmentManager(), MyDialog.CLASS_ADD_DIALOG);
+        myDialog.setListener((className, subjectName) -> addClass(className, subjectName));
     }
 
-    private void addClass(){
-        String className = class_edt.getText().toString();
-        String subjectName = subject_edt.getText().toString();
+    private void addClass(String className, String subjectName) {
         classItems.add(new ClassItem(className, subjectName));
         classAdapter.notifyDataSetChanged();
     }

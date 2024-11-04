@@ -1,6 +1,7 @@
 package com.example.prm;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     ArrayList<ClassItem> classItems = new ArrayList<>();
     Toolbar toolbar;
+    DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +40,12 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        dbHelper = new DBHelper(this);
+
         fabMain = findViewById(R.id.fab_main);
         fabMain.setOnClickListener(v -> showDialog());
+
+        loadData();
 
         setToolbar();
         recyclerView = findViewById(R.id.recyclerView);
@@ -49,7 +55,31 @@ public class MainActivity extends AppCompatActivity {
         classAdapter = new ClassAdapter(this, classItems);
         recyclerView.setAdapter(classAdapter);
         classAdapter.setOnItemClickListener(position -> gotoItemActivity(position));
+
     }
+
+    private void loadData() {
+        Cursor cursor = null;
+        try {
+            cursor = dbHelper.getClassTable();
+
+            if (cursor != null && cursor.moveToFirst()) {
+                classItems.clear();
+                do {
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.C_ID));
+                    String className = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.CLASS_NAME_KEY));
+                    String subjectName = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.SUBJECT_NAME_KEY));
+
+                    classItems.add(new ClassItem(id, className, subjectName));
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close(); // Đóng Cursor sau khi hoàn thành để tránh rò rỉ bộ nhớ
+            }
+        }
+    }
+
 
     private void setToolbar() {
         toolbar = findViewById(R.id.toolbar);
@@ -81,7 +111,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addClass(String className, String subjectName) {
-        classItems.add(new ClassItem(className, subjectName));
+        long cid = dbHelper.addClass(className, subjectName);
+        ClassItem classItem = new ClassItem(cid, className, subjectName);
+        classItems.add(classItem);
         classAdapter.notifyDataSetChanged();
     }
 }

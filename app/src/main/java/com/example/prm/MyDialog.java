@@ -19,8 +19,20 @@ public class MyDialog extends DialogFragment {
     public static final String CLASS_ADD_DIALOG = "addClass";
     public static final String STUDENT_ADD_DIALOG = "addStudent";
     public static final String CLASS_UPDATE_DIALOG = "updateClass";
+    public static final String STUDENT_UPDATE_DIALOG = "updateStudent";
 
     private OnCLickListener listener;
+    private int roll;
+    private String name;
+
+    public MyDialog(){
+
+    }
+
+    public MyDialog(int roll, String name) {
+        this.roll = roll;
+        this.name = name;
+    }
 
     public interface OnCLickListener {
         void onClick(String text1, String text2);
@@ -37,9 +49,43 @@ public class MyDialog extends DialogFragment {
         if (getTag().equals(CLASS_ADD_DIALOG)) dialog = getAddClassDialog();
         if (getTag().equals(STUDENT_ADD_DIALOG)) dialog = getAddStudentDialog();
         if (getTag().equals(CLASS_UPDATE_DIALOG)) dialog = getUpdateClassDialog();
+        if (getTag().equals(STUDENT_UPDATE_DIALOG)) dialog = getUpdateStudentDialog();
 
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
+    }
+
+    private Dialog getUpdateStudentDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog, null);
+        builder.setView(view);
+        //find text view title and set text in to it
+        TextView title = view.findViewById(R.id.titleDialog);
+        title.setText("Update Student");
+        //the same as title above
+        EditText roll_edt = view.findViewById(R.id.edt01);
+        EditText name_edt = view.findViewById(R.id.edt02);
+        roll_edt.setHint("Roll");
+        name_edt.setHint("Student Name");
+        //find cancle button, add button
+        Button cancle = view.findViewById(R.id.cancel_btn);
+        Button add = view.findViewById(R.id.add_btn);
+        //
+        add.setText("Update");
+        roll_edt.setText(roll + "");
+        roll_edt.setEnabled(false);
+        name_edt.setText(name);
+        //add action into cancle button
+        cancle.setOnClickListener(v -> dismiss());
+        //add action into add button
+        add.setOnClickListener(v -> {
+            String roll = roll_edt.getText().toString();
+            String name = name_edt.getText().toString();
+            //chuyen huong toi student activity -> addStudent function
+            listener.onClick(roll, name);
+            dismiss();
+        });
+        return builder.create();
     }
 
     private Dialog getUpdateClassDialog() {

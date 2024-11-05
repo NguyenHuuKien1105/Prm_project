@@ -2,6 +2,7 @@ package com.example.prm;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         this.context = context;
     }
 
-    public static class StudentViewHolder extends RecyclerView.ViewHolder {
+    public static class StudentViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView roll;
         TextView name;
         TextView status;
@@ -46,6 +47,12 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
             status = itemView.findViewById(R.id.status);
             cardView = itemView.findViewById(R.id.cardView);
             itemView.setOnClickListener(v -> onItemClickListener.onClick(getAdapterPosition()));
+            itemView.setOnCreateContextMenuListener(this);
+        }
+
+        public void onCreateContextMenu(ContextMenu contextMenu, View v, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            contextMenu.add(getAdapterPosition(), 0, 0, "Edit");
+            contextMenu.add(getAdapterPosition(), 1, 0, "Delete");
         }
     }
 
@@ -60,7 +67,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
 
     @Override
     public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
-        holder.roll.setText(studentItems.get(position).getRoll());
+        holder.roll.setText(studentItems.get(position).getRoll() + "");
         holder.name.setText(studentItems.get(position).getName());
         holder.status.setText(studentItems.get(position).getStatus());
         holder.cardView.setCardBackgroundColor(getColor(position));
@@ -73,7 +80,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         else if (status.equals("A")) {
             return Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(context, R.color.absent)));
         }
-        return Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(context,R.color.white)));
+        return Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(context, R.color.white)));
     }
 
     @Override

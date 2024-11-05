@@ -32,10 +32,10 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SELECT_CLASS_TABLE = "SELECT * FROM " + CLASS_TABLE_NAME;
 
     //student table
-    private static final String STUDENT_TABLE_NAME = "STUDENT_TABLE";
-    private static final String S_ID = "SID";
-    private static final String STUDENT_NAME_KEY = "STUDENT_NAME";
-    private static final String STUDENT_ROLL_KEY = "ROLL";
+    public static final String STUDENT_TABLE_NAME = "STUDENT_TABLE";
+    public static final String S_ID = "SID";
+    public static final String STUDENT_NAME_KEY = "STUDENT_NAME";
+    public static final String STUDENT_ROLL_KEY = "ROLL";
 
     private static final String CREATE_STUDENT_TABLE =
             "CREATE TABLE " + STUDENT_TABLE_NAME +
@@ -120,5 +120,34 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(SUBJECT_NAME_KEY, subjectName);
 
         return database.update(CLASS_TABLE_NAME, values, C_ID + "=?", new String[]{String.valueOf(cid)});
+    }
+
+    long addStudent(long cid, int roll, String name) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(C_ID, cid);
+        values.put(STUDENT_ROLL_KEY, roll);
+        values.put(STUDENT_NAME_KEY, name);
+
+        return database.insert(STUDENT_TABLE_NAME, null, values);
+    }
+
+    Cursor getStudentTable(long cid) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        return database.query(STUDENT_TABLE_NAME, null,
+                C_ID + "=?", new String[]{String.valueOf(cid)}, null, null, STUDENT_ROLL_KEY);
+    }
+
+    int deleteStudent(long sid) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        return database.delete(STUDENT_TABLE_NAME, S_ID + "=?", new String[]{String.valueOf(sid)});
+    }
+
+    long updateStudent(long sid, String name) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(STUDENT_NAME_KEY, name);
+
+        return database.update(STUDENT_TABLE_NAME, values, S_ID + "=?", new String[]{String.valueOf(sid)});
     }
 }

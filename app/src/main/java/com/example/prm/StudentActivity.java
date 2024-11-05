@@ -1,6 +1,7 @@
 package com.example.prm;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -9,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -23,12 +25,12 @@ public class StudentActivity extends AppCompatActivity {
     Toolbar toolbar;
     private String className;
     private String subjectName;
-    private int position;
+    private int position, cid;
     private RecyclerView recyclerView;
     private StudentAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<StudentItem> studentItems = new ArrayList<>();
-
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +42,35 @@ public class StudentActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        dbHelper = new DBHelper(this);
         Intent intent = getIntent();
         className = intent.getStringExtra("className");
         subjectName = intent.getStringExtra("subjectName");
         position = intent.getIntExtra("position", -1);
+        cid = intent.getIntExtra("cid", -1);
 
         setToolbar();
+        loadData();
         recyclerView = findViewById(R.id.student_recycle);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new StudentAdapter(this, studentItems);
         recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(position->changeStatus(position));
+        adapter.setOnItemClickListener(position -> changeStatus(position));
+    }
+
+    private void loadData() {
+        Cursor cursor = dbHelper.getStudentTable(cid);
+        studentItems.clear();
+        while (cursor.moveToNext()) {
+            long sid = cursor.getLong(cursor.getColumnIndexOrThrow(DBHelper.S_ID));
+            int roll = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.STUDENT_ROLL_KEY));
+            String name = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.STUDENT_NAME_KEY));
+
+            studentItems.add(new StudentItem(sid, roll, name));
+        }
+        cursor.close();
     }
 
     private void changeStatus(int position) {
@@ -95,8 +112,11 @@ public class StudentActivity extends AppCompatActivity {
         dialog.setListener(this::addStudent);
     }
 
-    private void addStudent(String roll, String name) {
-        studentItems.add(new StudentItem(roll, name));
+    private void addStudent(String roll_string, String name) {
+        int roll = Integer.parseInt(roll_string);
+        long sid = dbHelper.addStudent(cid, roll, name);
+        studentItems.add(new StudentItem(sid, roll, name));
+        StudentItem studentItem = new StudentItem(sid, roll, name);
         // In log để kiểm tra dữ liệu
         Log.d("StudentActivity", "Added student: Roll = " + roll + ", Name = " + name);
 
@@ -108,6 +128,42 @@ public class StudentActivity extends AppCompatActivity {
         //
         adapter.notifyDataSetChanged();
 //        adapter.notifyItemChanged(studentItems.size() - 1);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                showUpdateDialog(item.getGroupId());
+                break;
+            case 1:
+                deleteStudent(item.getGroupId());
+        }
+
+        return super.onContextItemSelected(item);
+
+    }
+
+    private void showUpdateDialog(int position) {
+        MyDialog dialog = new MyDialog(studentItems.get(position).getRoll(), studentItems.get(position).getName());
+        dialog.show(getSupportFragmentManager(), MyDialog.STUDENT_UPDATE_DIALOG);
+        dialog.setListener((roll_string, name) -> updateStudent(position, name));
+    }
+
+    private void updateStudent(int position, String name) {
+        //update trong database
+        dbHelper.updateStudent(studentItems.get(position).getSid(), name);
+        //update trong arrayList
+        studentItems.get(position).setName(name);
+        adapter.notifyItemChanged(position);
+    }
+
+    private void deleteStudent(int position) {
+        //xoa khoi database
+        dbHelper.deleteStudent(studentItems.get(position).getSid());
+        //xoa khoi arrayList
+        studentItems.remove(position);
+        adapter.notifyItemRemoved(position);
     }
 
 

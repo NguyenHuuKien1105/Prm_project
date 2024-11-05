@@ -3,11 +3,13 @@ package com.example.prm;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -115,5 +117,43 @@ public class MainActivity extends AppCompatActivity {
         ClassItem classItem = new ClassItem(cid, className, subjectName);
         classItems.add(classItem);
         classAdapter.notifyDataSetChanged();
+    }
+
+    //giu chuot de hien thi ra case
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                showUpdateDialog(item.getGroupId());
+                break;
+            case 1:
+                deleteClass(item.getGroupId());
+        }
+
+        return super.onContextItemSelected(item);
+
+    }
+
+    private void showUpdateDialog(int position) {
+        MyDialog dialog = new MyDialog();
+        dialog.show(getSupportFragmentManager(), MyDialog.CLASS_UPDATE_DIALOG);
+        dialog.setListener((className, subjectName) -> updateClass(position, className, subjectName));
+    }
+
+    private void updateClass(int position, String className, String subjectName) {
+        //update trong database
+        dbHelper.updateClass(classItems.get(position).getCid(), className, subjectName);
+        //update trong arrayList
+        classItems.get(position).setClassName(className);
+        classItems.get(position).setSubject(subjectName);
+        classAdapter.notifyItemChanged(position);
+    }
+
+    private void deleteClass(int position) {
+        //xoa khoi database
+        dbHelper.deleteClass(classItems.get(position).getCid());
+        //xoa khoi arrayList
+        classItems.remove(position);
+        classAdapter.notifyItemRemoved(position);
     }
 }

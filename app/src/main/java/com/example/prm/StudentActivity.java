@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class StudentActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -57,6 +58,7 @@ public class StudentActivity extends AppCompatActivity {
 
         setToolbar();
         loadData();
+
         recyclerView = findViewById(R.id.student_recycle);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -64,6 +66,8 @@ public class StudentActivity extends AppCompatActivity {
         adapter = new StudentAdapter(this, studentItems);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(position -> changeStatus(position));
+
+        loadStatus();
     }
 
     private void loadData() {
@@ -94,6 +98,7 @@ public class StudentActivity extends AppCompatActivity {
         subTitle = toolbar.findViewById(R.id.subtitle_toolbar);
         ImageButton back = toolbar.findViewById(R.id.back);
         ImageButton save = toolbar.findViewById(R.id.save);
+        save.setOnClickListener(v -> saveStatus());
 
         title.setText(className);
         subTitle.setText(subjectName + " | " + calendar.getDate());
@@ -102,6 +107,26 @@ public class StudentActivity extends AppCompatActivity {
 
         toolbar.inflateMenu(R.menu.student_menu);
         toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
+    }
+
+    private void saveStatus() {
+        for (StudentItem studentItem : studentItems) {
+            String status = studentItem.getStatus();
+            if (!Objects.equals(status, "P")) status = "A";
+            long value = dbHelper.addStatus(studentItem.getSid(), calendar.getDate(), status);
+
+            if (value == -1)
+                dbHelper.updateStatus(studentItem.getSid(), calendar.getDate(), status);
+        }
+    }
+
+    private void loadStatus() {
+        for (StudentItem studentItem : studentItems) {
+            String status = dbHelper.getStatus(studentItem.getSid(), calendar.getDate());
+            if (status != null) studentItem.setStatus(status);
+            else studentItem.setStatus("");
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private boolean onMenuItemClick(MenuItem menuItem) {
@@ -122,6 +147,7 @@ public class StudentActivity extends AppCompatActivity {
     private void onCalendarOkClicked(int year, int month, int day) {
         calendar.setDate(year, month, day);
         subTitle.setText(subjectName + " | " + calendar.getDate());
+        loadStatus();
     }
 
     private void showAddStudentDialog() {

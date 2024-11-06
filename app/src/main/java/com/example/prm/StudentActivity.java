@@ -27,7 +27,8 @@ public class StudentActivity extends AppCompatActivity {
     Toolbar toolbar;
     private String className;
     private String subjectName;
-    private int position, cid;
+    private int position;
+    private long cid;
     private RecyclerView recyclerView;
     private StudentAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -53,7 +54,7 @@ public class StudentActivity extends AppCompatActivity {
         className = intent.getStringExtra("className");
         subjectName = intent.getStringExtra("subjectName");
         position = intent.getIntExtra("position", -1);
-        cid = intent.getIntExtra("cid", -1);
+        cid = intent.getLongExtra("cid", -1);
 
 
         setToolbar();
@@ -113,7 +114,7 @@ public class StudentActivity extends AppCompatActivity {
         for (StudentItem studentItem : studentItems) {
             String status = studentItem.getStatus();
             if (!Objects.equals(status, "P")) status = "A";
-            long value = dbHelper.addStatus(studentItem.getSid(), calendar.getDate(), status);
+            long value = dbHelper.addStatus(studentItem.getSid(), cid, calendar.getDate(), status);
 
             if (value == -1)
                 dbHelper.updateStatus(studentItem.getSid(), calendar.getDate(), status);
@@ -134,8 +135,16 @@ public class StudentActivity extends AppCompatActivity {
             showAddStudentDialog();
         } else if (menuItem.getItemId() == R.id.show_calendar) {
             showCalendar();
+        } else if (menuItem.getItemId() == R.id.show_attendance_sheet) {
+            openSheetList();
         }
         return true;
+    }
+
+    private void openSheetList() {
+        Intent intent = new Intent(this, SheetListActivity.class);
+        intent.putExtra("cid", cid);
+        startActivity(intent);
     }
 
     private void showCalendar() {

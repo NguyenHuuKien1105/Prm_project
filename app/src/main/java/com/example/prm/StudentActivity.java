@@ -121,7 +121,7 @@ public class StudentActivity extends AppCompatActivity {
 
     private void onCalendarOkClicked(int year, int month, int day) {
         calendar.setDate(year, month, day);
-        subTitle.setText(calendar.getDate());
+        subTitle.setText(subjectName + " | " + calendar.getDate());
     }
 
     private void showAddStudentDialog() {

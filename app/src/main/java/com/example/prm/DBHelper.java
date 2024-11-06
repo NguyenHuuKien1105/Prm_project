@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 
 import androidx.annotation.Nullable;
@@ -66,7 +67,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     STATUS_KEY + " TEXT NOT NULL, " +
                     " UNIQUE (" + S_ID + ", " + DATE_KEY + "), " +
                     " FOREIGN KEY (" + S_ID + ") REFERENCES " + STUDENT_TABLE_NAME + "(" + S_ID + ")," +
-                    " FOREIGN KEY (" + C_ID + ") REFERENCES " + STUDENT_TABLE_NAME + "(" + C_ID + ")" +
+                    " FOREIGN KEY (" + C_ID + ") REFERENCES " + CLASS_TABLE_NAME + "(" + C_ID + ")" +
                     ");";
 
     private static final String DROP_STATUS_TABLE = "DROP TABLE IF EXISTS " + STATUS_TABLE_NAME;
@@ -153,7 +154,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return database.update(STUDENT_TABLE_NAME, values, S_ID + "=?", new String[]{String.valueOf(sid)});
     }
 
-//    long addStatus(long sid, long cid, String date, String status) {
+//    public long addStatus(long sid, long cid, String date, String status) {
 //        SQLiteDatabase database = this.getWritableDatabase();
 //        ContentValues values = new ContentValues();
 //        values.put(S_ID, sid);
@@ -161,15 +162,18 @@ public class DBHelper extends SQLiteOpenHelper {
 //        values.put(DATE_KEY, date);
 //        values.put(STATUS_KEY, status);
 //
-//        return database.insert(STATUS_TABLE_NAME, null, values);
-//    }
+//        // Check if the entry already exists
+//        String whereClause = S_ID + "=? AND " + DATE_KEY + "=?";
+//        String[] whereArgs = {String.valueOf(sid), date};
+//        Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
 //
-//    long updateStatus(long sid, String date, String status) {
-//        SQLiteDatabase database = this.getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//        values.put(STATUS_KEY, status);
-//        String whereClause = DATE_KEY + "='" + date + "'AND " + S_ID + "=" + sid;
-//        return database.update(STUDENT_TABLE_NAME, values, whereClause, null);
+//        if (cursor.moveToFirst()) {
+//            // Update if exists
+//            return updateStatus(sid, date, status);
+//        } else {
+//            // Insert if does not exist
+//            return database.insert(STATUS_TABLE_NAME, null, values);
+//        }
 //    }
 
     public long addStatus(long sid, long cid, String date, String status) {
@@ -180,19 +184,35 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(DATE_KEY, date);
         values.put(STATUS_KEY, status);
 
-        // Check if the entry already exists
+        // Kiểm tra xem dữ liệu đã tồn tại trong cơ sở dữ liệu chưa
         String whereClause = S_ID + "=? AND " + DATE_KEY + "=?";
         String[] whereArgs = {String.valueOf(sid), date};
         Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
 
+        long result = -1; // Mặc định là -1 (thất bại)
+
         if (cursor.moveToFirst()) {
-            // Update if exists
-            return updateStatus(sid, date, status);
+            // Dữ liệu đã tồn tại, thực hiện cập nhật
+            result = updateStatus(sid, date, status);
+            if (result > 0) {
+                Log.d("STATUS_UPDATE", "Cập nhật trạng thái thành công! ID: " + sid + ", Date: " + date);
+            } else {
+                Log.d("STATUS_UPDATE", "Cập nhật trạng thái thất bại! ID: " + sid + ", Date: " + date);
+            }
         } else {
-            // Insert if does not exist
-            return database.insert(STATUS_TABLE_NAME, null, values);
+            // Dữ liệu không tồn tại, thực hiện thêm mới
+            result = database.insert(STATUS_TABLE_NAME, null, values);
+            if (result > 0) {
+                Log.d("STATUS_INSERT", "Thêm trạng thái thành công! ID: " + sid + ", Date: " + date);
+            } else {
+                Log.d("STATUS_INSERT", "Thêm trạng thái thất bại! ID: " + sid + ", Date: " + date);
+            }
         }
+
+        cursor.close(); // Đảm bảo đóng cursor sau khi sử dụng
+        return result;
     }
+
 
     public long updateStatus(long sid, String date, String status) {
         SQLiteDatabase database = this.getWritableDatabase();
@@ -206,13 +226,37 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+//    String getStatus(long sid, String date) {
+//        String status = null;
+//        SQLiteDatabase database = this.getReadableDatabase();
+//        String whereClause = DATE_KEY + "='" + date + "' AND " + S_ID + "=" + sid;
+//        Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, null, null, null, null);
+//        if (cursor.moveToFirst())
+//            status = cursor.getString(cursor.getColumnIndexOrThrow(STATUS_KEY));
+//        return status;
+//    }
+
     String getStatus(long sid, String date) {
         String status = null;
         SQLiteDatabase database = this.getReadableDatabase();
-        String whereClause = DATE_KEY + "='" + date + "'AND " + S_ID + "=" + sid;
+
+        // Thêm dòng Log để kiểm tra điều kiện whereClause
+        String whereClause = DATE_KEY + "='" + date + "' AND " + S_ID + "=" + sid;
+        Log.d("whereClause", whereClause);  // Dòng này sẽ ghi lại nội dung của điều kiện whereClause
+
         Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, null, null, null, null);
-        if (cursor.moveToFirst())
+
+        // Kiểm tra nếu cursor có dữ liệu hay không
+        if (cursor != null && cursor.moveToFirst()) {
             status = cursor.getString(cursor.getColumnIndexOrThrow(STATUS_KEY));
+        } else {
+            Log.d("DBHelper", "No data found for sid: " + sid + " and date: " + date);  // Thêm log nếu không tìm thấy dữ liệu
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
         return status;
     }
 

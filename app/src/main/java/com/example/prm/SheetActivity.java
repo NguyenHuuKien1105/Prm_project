@@ -75,9 +75,9 @@ public class SheetActivity extends AppCompatActivity {
             for (int j = 1; j <= DAY_IN_MONTH; j++) {
                 String day = String.valueOf(j);
                 if (day.length() == 1) day = "0" + day;
-                String date = day + "," + month;
+                String date = day + "." + month;
                 String status = dbHelper.getStatus(idArray[i - 1], date);
-//                Log.d("status", status);
+                Log.d("StatusCheck", "Student ID: " + idArray[i - 1] + " - Date: " + date + " - Status: " + status);
                 status_tvs[i][j].setText(status);
             }
         }

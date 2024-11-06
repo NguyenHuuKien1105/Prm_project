@@ -113,6 +113,7 @@ public class StudentActivity extends AppCompatActivity {
     private void saveStatus() {
         for (StudentItem studentItem : studentItems) {
             String status = studentItem.getStatus();
+            Log.d("STATUS_CHECK", "Student SID: " + studentItem.getSid() + " - Status: " + status);
             if (!Objects.equals(status, "P")) status = "A";
             long value = dbHelper.addStatus(studentItem.getSid(), cid, calendar.getDate(), status);
 
@@ -124,6 +125,7 @@ public class StudentActivity extends AppCompatActivity {
     private void loadStatus() {
         for (StudentItem studentItem : studentItems) {
             String status = dbHelper.getStatus(studentItem.getSid(), calendar.getDate());
+            Log.d("StatusCheck", "Student ID: " + studentItem.getSid() + " - Status: " + status);
             if (status != null) studentItem.setStatus(status);
             else studentItem.setStatus("");
         }
@@ -144,14 +146,13 @@ public class StudentActivity extends AppCompatActivity {
     private void openSheetList() {
         //
         long[] idArray = new long[studentItems.size()];
+        int[] rollArray = new int[studentItems.size()];
+        String[] nameArray = new String[studentItems.size()];
+        //
         for (int i = 0; i < idArray.length; i++)
             idArray[i] = studentItems.get(i).getSid();
-        //
-        int[] rollArray = new int[studentItems.size()];
         for (int i = 0; i < rollArray.length; i++)
             rollArray[i] = studentItems.get(i).getRoll();
-        //
-        String[] nameArray = new String[studentItems.size()];
         for (int i = 0; i < nameArray.length; i++)
             nameArray[i] = studentItems.get(i).getName();
 

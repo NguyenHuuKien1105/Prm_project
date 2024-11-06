@@ -226,39 +226,44 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-//    String getStatus(long sid, String date) {
-//        String status = null;
-//        SQLiteDatabase database = this.getReadableDatabase();
-//        String whereClause = DATE_KEY + "='" + date + "' AND " + S_ID + "=" + sid;
-//        Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, null, null, null, null);
-//        if (cursor.moveToFirst())
-//            status = cursor.getString(cursor.getColumnIndexOrThrow(STATUS_KEY));
-//        return status;
-//    }
-
     String getStatus(long sid, String date) {
         String status = null;
         SQLiteDatabase database = this.getReadableDatabase();
-
-        // Thêm dòng Log để kiểm tra điều kiện whereClause
         String whereClause = DATE_KEY + "='" + date + "' AND " + S_ID + "=" + sid;
-        Log.d("whereClause", whereClause);  // Dòng này sẽ ghi lại nội dung của điều kiện whereClause
-
-        Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, null, null, null, null);
-
-        // Kiểm tra nếu cursor có dữ liệu hay không
-        if (cursor != null && cursor.moveToFirst()) {
+        Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause,
+                null, null, null, null);
+        Log.d("StatusCheck", "Query: " + whereClause);
+        if (cursor.moveToFirst())
             status = cursor.getString(cursor.getColumnIndexOrThrow(STATUS_KEY));
-        } else {
-            Log.d("DBHelper", "No data found for sid: " + sid + " and date: " + date);  // Thêm log nếu không tìm thấy dữ liệu
+        else {
+            Log.d("StatusCheck", "No data found for " + whereClause);
         }
-
-        if (cursor != null) {
-            cursor.close();
-        }
-
         return status;
     }
+
+//    String getStatus(long sid, String date) {
+//        String status = null;
+//        SQLiteDatabase database = this.getReadableDatabase();
+//
+//        // Thêm dòng Log để kiểm tra điều kiện whereClause
+//        String whereClause = DATE_KEY + "='" + date + "' AND " + S_ID + "=" + sid;
+//        Log.d("whereClause", whereClause);  // Dòng này sẽ ghi lại nội dung của điều kiện whereClause
+//
+//        Cursor cursor = database.query(STATUS_TABLE_NAME, null, whereClause, null, null, null, null);
+//
+//        // Kiểm tra nếu cursor có dữ liệu hay không
+//        if (cursor != null && cursor.moveToFirst()) {
+//            status = cursor.getString(cursor.getColumnIndexOrThrow(STATUS_KEY));
+//        } else {
+//            Log.d("DBHelper", "No data found for sid: " + sid + " and date: " + date);  // Thêm log nếu không tìm thấy dữ liệu
+//        }
+//
+//        if (cursor != null) {
+//            cursor.close();
+//        }
+//
+//        return status;
+//    }
 
     Cursor getDistinctMonths(long cid) {
         SQLiteDatabase database = this.getReadableDatabase();

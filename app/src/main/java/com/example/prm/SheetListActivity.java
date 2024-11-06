@@ -41,7 +41,7 @@ public class SheetListActivity extends AppCompatActivity {
         adapter = new ArrayAdapter(this, R.layout.sheet_list, R.id.date_list_item, listItems);
         sheetList.setAdapter(adapter);
         //
-        sheetList.setOnItemClickListener((parent, view, position, id) -> openSheetActivity((int) position));
+        sheetList.setOnItemClickListener((parent, view, position, id) -> openSheetActivity(position));
 
     }
 
@@ -59,7 +59,6 @@ public class SheetListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //Failed to find view with ID com.example.prm:id/date_list_item in item layout
     private void loadListItems() {
         Cursor cursor = new DBHelper(this).getDistinctMonths(cid);
 

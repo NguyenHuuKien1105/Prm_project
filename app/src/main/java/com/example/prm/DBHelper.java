@@ -79,7 +79,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String USER_ID = "USER_ID";
     public static final String USER_NAME = "USER_NAME";
     public static final String USER_PASSWORD = "USER_PASSWORD";
-    public static final String USER_ROLE = "USER_ROLE";
+    public static final String USER_ROLL = "USER_ROLL";
 
     private static final String CREATE_USER_TABLE =
             "CREATE TABLE " + USER_TABLE_NAME +
@@ -87,7 +87,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     USER_NAME + " TEXT NOT NULL, " +
                     USER_PASSWORD + " TEXT NOT NULL, " +
-                    USER_ROLE + " TEXT NOT NULL" +
+                    USER_ROLL + " TEXT NOT NULL" +
                     ");";
 
     private static final String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + USER_TABLE_NAME;
@@ -165,7 +165,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(USER_NAME, username);
         values.put(USER_PASSWORD, password);
-        values.put(USER_ROLE, roll);  // Thêm USER_ROLL vào ContentValues
+        values.put(USER_ROLL, roll);  // Thêm USER_ROLL vào ContentValues
 
         return database.insert(USER_TABLE_NAME, null, values);
     }
@@ -277,12 +277,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //Create user
-    long addUser(String username, String password, String role) {
+    long addUser(String username, String password, String roll) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(USER_NAME, username);
         values.put(USER_PASSWORD, password);
-        values.put(USER_ROLE, role);
+        values.put(USER_ROLL, roll);
 
         return database.insert(USER_TABLE_NAME, null, values);
     }
@@ -310,23 +310,23 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    // Get the role of the user
-    String getRole(String username) {
+    // Get the roll of the user
+    String getRoll(String username) {
         SQLiteDatabase database = this.getReadableDatabase();
         String whereClause = USER_NAME + "=?";
         String[] whereArgs = {username};
         Cursor cursor = database.query(USER_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
-        String role = null;
+        String roll = null;
         if (cursor.moveToFirst()) {
-            role = cursor.getString(cursor.getColumnIndexOrThrow(USER_ROLE));
+            roll = cursor.getString(cursor.getColumnIndexOrThrow(USER_ROLL));
         }
         cursor.close();
-        return role;
+        return roll;
     }
     public long updateUserRoll(long userId, String newRoll) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(USER_ROLE, newRoll); // Update only the roll field
+        values.put(USER_ROLL, newRoll); // Update only the roll field
 
         // Specify the condition to update: only update the user with the matching USER_ID
         String whereClause = USER_ID + "=?";

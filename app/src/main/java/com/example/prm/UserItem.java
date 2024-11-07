@@ -4,17 +4,17 @@ public class UserItem {
     private long uid;
     private String username;
     private String password;
-    private int role;
+    private int roll;
 
     public UserItem(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public UserItem(String username, String password, int role) {
+    public UserItem(String username, String password, int roll) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.roll = roll;
     }
 
     public String getUsername() {
@@ -41,18 +41,18 @@ public class UserItem {
         this.uid = uid;
     }
 
-    public int getRole() {
-        return role;
+    public int getRoll() {
+        return roll;
     }
 
-    public void setRole(int role) {
-        this.role = role;
+    public void setRoll(int roll) {
+        this.roll = roll;
     }
 
-    public UserItem(long uid, String username, String password, int role)  {
+    public UserItem(long uid, String username, String password, int roll)  {
         this.uid = uid;
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.roll = roll;
     }
 }

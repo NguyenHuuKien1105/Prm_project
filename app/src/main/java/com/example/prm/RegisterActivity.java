@@ -33,12 +33,12 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         //Spinner
-        Spinner roleSpinner = findViewById(R.id.role);
+        Spinner rollSpinner = findViewById(R.id.roll);
 
         //Set up ArrayAdapter for Spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.roles, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.rolls, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        roleSpinner.setAdapter(adapter);
+        rollSpinner.setAdapter(adapter);
 
         //DB setting
         dbHelper = new DBHelper(this);
@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String passwordStr = password.getText().toString();
                 String rePasswordStr = rePassword.getText().toString();
 
-                String roleStr = roleSpinner.getSelectedItem().toString();
+                String rollStr = rollSpinner.getSelectedItem().toString();
 
                 //Check if the fields are empty
                 if (usernameStr.isEmpty() || passwordStr.isEmpty() || rePasswordStr.isEmpty()) {
@@ -68,11 +68,11 @@ public class RegisterActivity extends AppCompatActivity {
                         // Check if the password matches
                         if (passwordStr.equals(rePasswordStr)) {
                             Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
-                            dbHelper.addUser(usernameStr, passwordStr, roleStr);
+                            dbHelper.addUser(usernameStr, passwordStr, rollStr);
                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                             intent.putExtra("username", usernameStr);
                             intent.putExtra("password", passwordStr);
-                            intent.putExtra("role", roleStr);
+                            intent.putExtra("roll", rollStr);
                             startActivity(intent);
                             finish();
                         }else {

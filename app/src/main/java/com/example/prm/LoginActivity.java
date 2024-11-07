@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String usernameStr = intent.getStringExtra("username");
         String passwordStr = intent.getStringExtra("password");
-        String roleStr = intent.getStringExtra("role");
+        String rolStr = intent.getStringExtra("roll");
 
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
@@ -59,13 +59,11 @@ public class LoginActivity extends AppCompatActivity {
                     if (dbHelper.checkUser(usernameStr, passwordStr)) {
                         Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
 
-                        // Check the role of the user
-                        switch (dbHelper.getRole(usernameStr)) {
+                        // Check the roll of the user
+                        switch (dbHelper.getRoll(usernameStr)) {
                             case "Admin":
-//                                Intent adminIntent = new Intent(LoginActivity.this, AdminActivity.class);
-//                                intent.putExtra("username", usernameStr);
-//                                intent.putExtra("password", passwordStr);
-//                                startActivity(adminIntent);
+                                Intent adminIntent = new Intent(LoginActivity.this, ManagerActivity.class);
+                                startActivity(adminIntent);
                                 finish();
                                 break;
                             case "Teacher":

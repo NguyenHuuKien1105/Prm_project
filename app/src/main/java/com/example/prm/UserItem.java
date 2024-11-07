@@ -11,6 +11,12 @@ public class UserItem {
         this.password = password;
     }
 
+    public UserItem(String username, String password, int roll) {
+        this.username = username;
+        this.password = password;
+        this.roll = roll;
+    }
+
     public String getUsername() {
         return username;
     }

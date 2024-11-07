@@ -99,10 +99,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_CLASS_TABLE);
-        db.execSQL(CREATE_STUDENT_TABLE);
-        db.execSQL(CREATE_STATUS_TABLE);
-        db.execSQL(CREATE_USER_TABLE);
+        try {
+            db.execSQL(CREATE_CLASS_TABLE);
+            db.execSQL(CREATE_STUDENT_TABLE);
+            db.execSQL(CREATE_STATUS_TABLE);
+            db.execSQL(CREATE_USER_TABLE);
+            Log.d("DBHelper", "Tables created successfully.");
+        } catch (SQLException e) {
+            Log.e("DB_CREATE_ERROR", "Error creating tables", e);
+        }
     }
 
 
@@ -133,6 +138,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return database.rawQuery(SELECT_CLASS_TABLE, null);
     }
 
+    Cursor getUserTable() {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        return database.rawQuery(SELECT_USER_TABLE, null);
+    }
+
+
     int deleteClass(long cid) {
         SQLiteDatabase database = this.getReadableDatabase();
         return database.delete(CLASS_TABLE_NAME, C_ID + "=?", new String[]{String.valueOf(cid)});
@@ -145,6 +157,17 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(SUBJECT_NAME_KEY, subjectName);
 
         return database.update(CLASS_TABLE_NAME, values, C_ID + "=?", new String[]{String.valueOf(cid)});
+    }
+
+
+    long addUserRoll(String username, String password, int roll) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_NAME, username);
+        values.put(USER_PASSWORD, password);
+        values.put(USER_ROLE, roll);  // Thêm USER_ROLL vào ContentValues
+
+        return database.insert(USER_TABLE_NAME, null, values);
     }
 
     long addStudent(long cid, int roll, String name) {
@@ -166,6 +189,11 @@ public class DBHelper extends SQLiteOpenHelper {
     int deleteStudent(long sid) {
         SQLiteDatabase database = this.getReadableDatabase();
         return database.delete(STUDENT_TABLE_NAME, S_ID + "=?", new String[]{String.valueOf(sid)});
+    }
+
+    int deleteUser(long sid) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        return database.delete(USER_TABLE_NAME, USER_ID+ "=?", new String[]{String.valueOf(sid)});
     }
 
     long updateStudent(long sid, String name) {
@@ -293,5 +321,17 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return role;
+    }
+    public long updateUserRoll(long userId, String newRoll) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_ROLE, newRoll); // Update only the roll field
+
+        // Specify the condition to update: only update the user with the matching USER_ID
+        String whereClause = USER_ID + "=?";
+        String[] whereArgs = {String.valueOf(userId)};
+
+        // Update roll based on USER_ID
+        return database.update(USER_TABLE_NAME, values, whereClause, whereArgs);
     }
 }

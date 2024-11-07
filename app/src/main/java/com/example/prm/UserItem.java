@@ -1,47 +1,58 @@
 package com.example.prm;
 
 public class UserItem {
-    private int id;
-    private String name;
+    private long uid;
+    private String username;
     private String password;
-    private String role;
+    private int role;
 
-    public UserItem(int id, String name, String password, String role) {
-        this.id = id;
-        this.name = name;
+    public UserItem(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserItem(String username, String password, int role) {
+        this.username = username;
         this.password = password;
         this.role = role;
     }
 
-    public int getId() {
-        return id;
+    public String getUsername() {
+        return username;
     }
 
-    public String getName() {
-        return name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setRole(String role) {
+    public long getUid() {
+        return uid;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
+
+    public UserItem(long uid, String username, String password, int role)  {
+        this.uid = uid;
+        this.username = username;
+        this.password = password;
         this.role = role;
     }
 }

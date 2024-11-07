@@ -39,6 +39,9 @@ public class MyDialog extends DialogFragment {
         void onClick(String text1, String text2);
     }
 
+    public interface OnCLickListener2 {
+        void onClick(String text1, String text2,int roll);
+    }
     public void setListener(OnCLickListener listener) {
         this.listener = listener;
     }

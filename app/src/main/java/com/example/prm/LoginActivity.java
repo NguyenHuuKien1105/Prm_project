@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
 
                         // Check the role of the user
-                        switch (roleStr) {
+                        switch (dbHelper.getRole(usernameStr)) {
                             case "Admin":
 //                                Intent adminIntent = new Intent(LoginActivity.this, AdminActivity.class);
 //                                intent.putExtra("username", usernameStr);

@@ -280,4 +280,18 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return result;
     }
+
+    // Get the role of the user
+    String getRole(String username) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        String whereClause = USER_NAME + "=?";
+        String[] whereArgs = {username};
+        Cursor cursor = database.query(USER_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+        String role = null;
+        if (cursor.moveToFirst()) {
+            role = cursor.getString(cursor.getColumnIndexOrThrow(USER_ROLE));
+        }
+        cursor.close();
+        return role;
+    }
 }

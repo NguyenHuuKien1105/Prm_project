@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">prm</string>
+
+    <string-array name="roles">
+        <item>Teacher</item>
+        <item>Admin</item>
+    </string-array>
 </resources>

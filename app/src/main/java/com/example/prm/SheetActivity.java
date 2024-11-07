@@ -1,15 +1,18 @@
 package com.example.prm;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -17,6 +20,10 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.Calendar;
 
 public class SheetActivity extends AppCompatActivity {
+
+    private Toolbar toolbar;
+    private String className;
+    private String month;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +36,11 @@ public class SheetActivity extends AppCompatActivity {
             return insets;
         });
 
+        Intent intent = getIntent();
+        className = intent.getStringExtra("className");
+        month = getIntent().getStringExtra("month");
+
+        setToolbar();
         showTable();
     }
 
@@ -38,7 +50,7 @@ public class SheetActivity extends AppCompatActivity {
         long[] idArray = getIntent().getLongArrayExtra("idArray");
         int[] rollArray = getIntent().getIntArrayExtra("rollArray");
         String[] nameArray = getIntent().getStringArrayExtra("nameArray");
-        String month = getIntent().getStringExtra("month");
+
 
         int DAY_IN_MONTH = getDayInMonth(month);
         // row setup
@@ -115,5 +127,18 @@ public class SheetActivity extends AppCompatActivity {
         calendar.set(Calendar.MONTH, monthIndex);
         calendar.set(Calendar.YEAR, year);
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    private void setToolbar() {
+        toolbar = findViewById(R.id.toolbar);
+        TextView title = toolbar.findViewById(R.id.title_toolbar);
+        TextView subTitle = toolbar.findViewById(R.id.subtitle_toolbar);
+        ImageButton back = toolbar.findViewById(R.id.back);
+        ImageButton save = toolbar.findViewById(R.id.save);
+
+        title.setText(month);
+        subTitle.setText(className);
+
+        back.setOnClickListener(v -> onBackPressed());
     }
 }

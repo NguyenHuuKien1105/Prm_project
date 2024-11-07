@@ -157,6 +157,7 @@ public class StudentActivity extends AppCompatActivity {
             nameArray[i] = studentItems.get(i).getName();
 
         Intent intent = new Intent(this, SheetListActivity.class);
+        intent.putExtra("className", className);
         intent.putExtra("cid", cid);
         intent.putExtra("idArray", idArray);
         intent.putExtra("rollArray", rollArray);

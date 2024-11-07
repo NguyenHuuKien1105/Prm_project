@@ -296,6 +296,7 @@ public class DBHelper extends SQLiteOpenHelper {
         boolean result = cursor.moveToFirst();
         cursor.close();
         return result;
+        
     }
 
     // Check if a user already exists

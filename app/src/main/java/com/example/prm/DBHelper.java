@@ -73,6 +73,25 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_STATUS_TABLE = "DROP TABLE IF EXISTS " + STATUS_TABLE_NAME;
     private static final String SELECT_STATUS_TABLE = "SELECT * FROM " + STATUS_TABLE_NAME;
 
+    // USER TABLE
+    public static final String USER_TABLE_NAME = "USER_TABLE";
+    public static final String USER_ID = "USER_ID";
+    public static final String USER_NAME = "USER_NAME";
+    public static final String USER_PASSWORD = "USER_PASSWORD";
+    public static final String USER_ROLL = "USER_ROLL";
+
+    private static final String CREATE_USER_TABLE =
+            "CREATE TABLE " + USER_TABLE_NAME +
+                    "(" +
+                    USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    USER_NAME + " TEXT NOT NULL, " +
+                    USER_PASSWORD + " TEXT NOT NULL," +
+                    USER_ROLL + "INTEGER NOT NULL" +
+                    ");";
+
+    private static final String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + USER_TABLE_NAME;
+    private static final String SELECT_USER_TABLE = "SELECT * FROM " + USER_TABLE_NAME;
+
     public DBHelper(@Nullable Context context) {
         super(context, "Attendance.db", null, VERSION);
     }
@@ -82,6 +101,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_CLASS_TABLE);
         db.execSQL(CREATE_STUDENT_TABLE);
         db.execSQL(CREATE_STATUS_TABLE);
+        db.execSQL(CREATE_USER_TABLE);
     }
 
 
@@ -91,6 +111,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(DROP_CLASS_TABLE);
             db.execSQL(DROP_STUDENT_TABLE);
             db.execSQL(DROP_STATUS_TABLE);
+            db.execSQL(DROP_USER_TABLE);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -226,4 +247,35 @@ public class DBHelper extends SQLiteOpenHelper {
                 "substr(" + DATE_KEY + ",4,7)", null, null);
     }
 
+    // Create a new user
+    long addUser(String username, String password) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_NAME, username);
+        values.put(USER_PASSWORD, password);
+
+        return database.insert(USER_TABLE_NAME, null, values);
+    }
+
+    // Check if a user exists
+    boolean checkUser(String username, String password) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        String whereClause = USER_NAME + "=? AND " + USER_PASSWORD + "=?";
+        String[] whereArgs = {username, password};
+        Cursor cursor = database.query(USER_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+        boolean result = cursor.moveToFirst();
+        cursor.close();
+        return result;
+    }
+
+    // Check if a user already exists
+    boolean checkUserExit(String username) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        String whereClause = USER_NAME + "=?";
+        String[] whereArgs = {username};
+        Cursor cursor = database.query(USER_TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+        boolean result = cursor.moveToFirst();
+        cursor.close();
+        return result;
+    }
 }

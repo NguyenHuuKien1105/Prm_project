@@ -56,16 +56,17 @@ public class LoginActivity extends AppCompatActivity {
                 }else {
                     // Check if the user exists in the database
                     if (dbHelper.checkUser(usernameStr, passwordStr)) {
-                        Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
 
                         // Check the roll of the user
                         switch (dbHelper.getRoll(usernameStr)) {
                             case "0":
+                                Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
                                 Intent adminIntent = new Intent(LoginActivity.this, ManagerActivity.class);
                                 startActivity(adminIntent);
                                 finish();
                                 break;
                             case "1":
+                                Toast.makeText(LoginActivity.this, "Login successfully", Toast.LENGTH_SHORT).show();
                                 Intent teacherIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("username", usernameStr);
                                 intent.putExtra("password", passwordStr);
@@ -73,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                                 break;
                             default:
+                                Toast.makeText(LoginActivity.this, "You are not Teacher or Admin", Toast.LENGTH_SHORT).show();
                                 break;
                         }
 

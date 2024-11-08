@@ -162,8 +162,8 @@ public class MyDialog extends DialogFragment {
         EditText class_edt = view.findViewById(R.id.edt01);
         EditText subject_edt = view.findViewById(R.id.edt02);
 
-        class_edt.setHint("Class Name");
         subject_edt.setHint("Subject Name");
+        class_edt.setHint("Class Name");
 
         Button cancle = view.findViewById(R.id.cancel_btn);
         Button add = view.findViewById(R.id.add_btn);

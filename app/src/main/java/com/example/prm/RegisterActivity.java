@@ -18,7 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class RegisterActivity extends AppCompatActivity {
 
     EditText username, password, rePassword;
-    Button signupBtn;
+    Button signupBtn, loginBtn;
     DBHelper dbHelper;
 
     @Override
@@ -56,6 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String rePasswordStr = rePassword.getText().toString();
 
                 String rollStr = rollSpinner.getSelectedItem().toString();
+                int roleValue = rollStr.equals("Teacher") ? 1 : 0;
 
                 //Check if the fields are empty
                 if (usernameStr.isEmpty() || passwordStr.isEmpty() || rePasswordStr.isEmpty()) {
@@ -68,11 +69,11 @@ public class RegisterActivity extends AppCompatActivity {
                         // Check if the password matches
                         if (passwordStr.equals(rePasswordStr)) {
                             Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
-                            dbHelper.addUser(usernameStr, passwordStr, rollStr);
+                            dbHelper.addUser(usernameStr, passwordStr, String.valueOf(roleValue));
                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                             intent.putExtra("username", usernameStr);
                             intent.putExtra("password", passwordStr);
-                            intent.putExtra("roll", rollStr);
+                            intent.putExtra("roll", roleValue);
                             startActivity(intent);
                             finish();
                         }else {
@@ -80,6 +81,16 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                 }
+            }
+        });
+
+        loginBtn = findViewById(R.id.returnLogin);
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }

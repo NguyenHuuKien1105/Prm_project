@@ -160,16 +160,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    long addUserRoll(String username, String password, int roll) {
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(USER_NAME, username);
-        values.put(USER_PASSWORD, password);
-        values.put(USER_ROLL, roll);  // Thêm USER_ROLL vào ContentValues
-
-        return database.insert(USER_TABLE_NAME, null, values);
-    }
-
     long addStudent(long cid, int roll, String name) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -323,6 +313,17 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return roll;
     }
+
+    long addUserRoll(String username, String password, int roll) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_NAME, username);
+        values.put(USER_PASSWORD, password);
+        values.put(USER_ROLL, roll);  // Thêm USER_ROLL vào ContentValues
+
+        return database.insert(USER_TABLE_NAME, null, values);
+    }
+
     public long updateUserRoll(long userId, String newRoll) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();

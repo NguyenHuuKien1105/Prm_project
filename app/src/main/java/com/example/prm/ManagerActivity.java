@@ -88,7 +88,7 @@ public class ManagerActivity extends AppCompatActivity {
                     int uid = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.USER_ID));
                     String username = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.USER_NAME));
                     String password = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.USER_PASSWORD));
-                    int roll =cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.USER_ROLL));
+                    int roll = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.USER_ROLL)));
                     userItems.add(new UserItem(uid, username, password,roll));
                 } while (cursor.moveToNext());
             }

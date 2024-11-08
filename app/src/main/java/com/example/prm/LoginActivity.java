@@ -35,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String usernameStr = intent.getStringExtra("username");
         String passwordStr = intent.getStringExtra("password");
-        String rolStr = intent.getStringExtra("roll");
 
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
@@ -61,12 +60,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Check the roll of the user
                         switch (dbHelper.getRoll(usernameStr)) {
-                            case "Admin":
+                            case "0":
                                 Intent adminIntent = new Intent(LoginActivity.this, ManagerActivity.class);
                                 startActivity(adminIntent);
                                 finish();
                                 break;
-                            case "Teacher":
+                            case "1":
                                 Intent teacherIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("username", usernameStr);
                                 intent.putExtra("password", passwordStr);

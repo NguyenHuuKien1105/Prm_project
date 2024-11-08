@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -88,7 +89,7 @@ public class ManagerActivity extends AppCompatActivity {
                     int uid = cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.USER_ID));
                     String username = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.USER_NAME));
                     String password = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.USER_PASSWORD));
-                    int roll =cursor.getInt(cursor.getColumnIndexOrThrow(DBHelper.USER_ROLL));
+                    int roll = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.USER_ROLL)));
                     userItems.add(new UserItem(uid, username, password,roll));
                 } while (cursor.moveToNext());
             }
@@ -122,14 +123,22 @@ public class ManagerActivity extends AppCompatActivity {
 
     private void addUser(String username, String password, String roll_string) {
         int roll = Integer.parseInt(roll_string);
-        long uid = dbHelper.addUserRoll(username, password, roll);
+        if(dbHelper.checkUserExists(username)){
+            Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show();
+        }else{
+            if (roll < 0 || roll > 1) {
+                Toast.makeText(this, "Roll must be 0 or 1", Toast.LENGTH_SHORT).show();
+            }else {
+                long uid = dbHelper.addUserRoll(username, password, roll);
 
-        userItems.add(new UserItem(uid, username, password, roll));
-        UserItem userItems = new UserItem(uid, username, password, roll);
-        Log.d("UserItems", userItems.getUsername());
-        Log.d("UserItems", userItems.getPassword());
-        Log.d("UserItems", String.valueOf(userItems.getRoll()));
-        adapter.notifyDataSetChanged();
+                userItems.add(new UserItem(uid, username, password, roll));
+                UserItem userItems = new UserItem(uid, username, password, roll);
+                Log.d("UserItems", userItems.getUsername());
+                Log.d("UserItems", userItems.getPassword());
+                Log.d("UserItems", String.valueOf(userItems.getRoll()));
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
@@ -154,11 +163,16 @@ public class ManagerActivity extends AppCompatActivity {
     }
 
     private void updateManager(int position, int roll) {
-        //update trong database
-        dbHelper.updateUserRoll(userItems.get(position).getUid(), String.valueOf(roll));
-        //update trong arrayList
-        userItems.get(position).setRoll(roll);
-        adapter.notifyItemChanged(position);
+        if (roll < 0 || roll > 1) {
+            Toast.makeText(this, "Roll must be 0 or 1", Toast.LENGTH_SHORT).show();
+        }else {
+            //update trong database
+            dbHelper.updateUserRoll(userItems.get(position).getUid(), String.valueOf(roll));
+            //update trong arrayList
+            userItems.get(position).setRoll(roll);
+            adapter.notifyItemChanged(position);
+            Toast.makeText(this, "Update successfully", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void deleteManager(int position) {
